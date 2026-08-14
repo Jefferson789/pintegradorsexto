@@ -225,7 +225,7 @@ def calcular_puntuacion_reglas(row: pd.Series) -> Tuple[float, List[str]]:
         puntos_por_factor.append(("asistencia < 85%", 10))
 
     if row.get("ha_abandonado_previamente", False):
-        puntuacion += 25
+        puntuacion += 28
         factores.append("abandono_previo")
         puntos_por_factor.append(("abandono previo", 20))
 
@@ -241,17 +241,17 @@ def calcular_puntuacion_reglas(row: pd.Series) -> Tuple[float, List[str]]:
     # ─── FACTORES DE VULNERABILIDAD ───
 
     if row.get("es_trabajador_infantil", False):
-        puntuacion += 15
+        puntuacion += 18
         factores.append("trabajo_infantil")
         puntos_por_factor.append(("trabajo infantil", 15))
 
     if row.get("consumo_sustancias", False):
-        puntuacion += 20
+        puntuacion += 25
         factores.append("consumo_sustancias")
         puntos_por_factor.append(("consumo sustancias", 15))
 
     if row.get("es_victima_violencia", False):
-        puntuacion += 12
+        puntuacion += 18
         factores.append("victima_violencia")
         puntos_por_factor.append(("víctima violencia", 12))
 
@@ -317,7 +317,7 @@ def calcular_puntuacion_reglas(row: pd.Series) -> Tuple[float, List[str]]:
         puntos_por_factor.append(("edad >> esperada", 8))
 
     if row.get("horas_trabajo_semanales", 0) >= 30:
-        puntuacion += 10
+        puntuacion += 18
         factores.append("trabajo_intensivo")
         puntos_por_factor.append(("30+ horas trabajo", 10))
     elif row.get("horas_trabajo_semanales", 0) >= 15:
@@ -328,7 +328,7 @@ def calcular_puntuacion_reglas(row: pd.Series) -> Tuple[float, List[str]]:
     # ─── NORMALIZAR A [0, 1] ───
     # Puntuación máxima teórica ~200, pero normalizamos con sigmoide suave
     # para que casos extremos den ~0.95 y casos normales ~0.05
-    probabilidad_reglas = 1.0 / (1.0 + np.exp(-0.03 * (puntuacion - 30)))
+    probabilidad_reglas = 1.0 / (1.0 + np.exp(-0.035 * (puntuacion - 25)))
 
     logger.info("📊 Puntuación reglas: %.1f puntos | Prob reglas: %.4f | Factores: %s",
                 puntuacion, probabilidad_reglas, puntos_por_factor)
@@ -336,26 +336,31 @@ def calcular_puntuacion_reglas(row: pd.Series) -> Tuple[float, List[str]]:
     return float(probabilidad_reglas), factores[:5]
 
 
-def combinar_probabilidades(prob_ml: float, prob_reglas: float, peso_ml: float = 0.45) -> float:
+def combinar_probabilidades(prob_ml: float, prob_reglas: float, peso_ml: float = 0.35) -> float:
     """
-    Combina la probabilidad del modelo ML con la de las reglas.
+    Combina ML + Reglas con protección fuerte para casos extremos.
+    """
+    # Caso 1: Las reglas detectan riesgo MUY ALTO → forzar alto/crítico
+    if prob_reglas >= 0.85:
+        # Damos mucho peso a las reglas
+        combinada = 0.20 * prob_ml + 0.80 * prob_reglas
+        combinada = min(0.97, combinada + 0.05)  # boost extra
+        return float(np.clip(combinada, 0.0, 0.9999))
 
-    peso_ml = 0.45 significa que el modelo ML aporta el 45% y las reglas el 55%.
-    Esto garantiza que casos obvios de riesgo (capturados por reglas) no se ignoren.
-    """
-    # Si las reglas detectan riesgo alto (>0.6) y el ML dice bajo, 
-    # las reglas empujan hacia arriba
+    # Caso 2: Reglas altas y ML bajo (el bug típico)
+    if prob_reglas > 0.70 and prob_ml < 0.40:
+        combinada = 0.30 * prob_ml + 0.70 * prob_reglas
+        combinada = min(0.95, combinada + 0.08)
+        return float(np.clip(combinada, 0.0, 0.9999))
+
+    # Caso 3: Ambos detectan riesgo moderado/alto
+    if prob_ml > 0.45 and prob_reglas > 0.45:
+        combinada = peso_ml * prob_ml + (1 - peso_ml) * prob_reglas
+        combinada = min(0.99, combinada * 1.12)
+        return float(np.clip(combinada, 0.0, 0.9999))
+
+    # Caso normal
     combinada = peso_ml * prob_ml + (1 - peso_ml) * prob_reglas
-
-    # Boost adicional si AMBOS detectan riesgo
-    if prob_ml > 0.5 and prob_reglas > 0.5:
-        combinada = min(0.99, combinada * 1.15)
-
-    # Boost si las reglas son muy altas pero ML es bajo (caso del bug)
-    if prob_reglas > 0.7 and prob_ml < 0.3:
-        combinada = 0.5 * prob_ml + 0.5 * prob_reglas
-        combinada = min(0.95, combinada + 0.1)
-
     return float(np.clip(combinada, 0.0, 0.9999))
 
 
@@ -687,6 +692,17 @@ async def predict(request: PredictRequest):
 
         # ─── PASO 3: COMBINAR ambas probabilidades ───
         prob_final = combinar_probabilidades(prob_ml, prob_reglas)
+
+        # ─── REGLA DURA DE NEGOCIO ───
+        if (row.get("es_trabajador_infantil", False) and 
+            row.get("horas_trabajo_semanales", 0) >= 25 and
+            (row.get("es_victima_violencia", False) or 
+            row.get("consumo_sustancias", False) or 
+            row.get("ha_abandonado_previamente", False))):
+            
+            prob_final = max(prob_final, 0.72)   # fuerza mínimo "alto"
+            if "trabajo_intensivo_critico" not in factores_reglas:
+                factores_reglas.insert(0, "trabajo_intensivo_critico")
 
         # ─── PASO 4: Determinar nivel de riesgo y factores ───
         nivel_riesgo = determinar_nivel_riesgo(prob_final)
