@@ -4,7 +4,7 @@ import { ParseIntPipe } from '@nestjs/common';
 
 @Controller('dataset-prediccion')
 export class DatasetPrediccionController {
-  constructor(private readonly service: DatasetPrediccionService) {}
+  constructor(private readonly service: DatasetPrediccionService) { }
 
   // GET /dataset-prediccion
   // Devuelve TODO el dataset (tu compañero de ML lo usará para entrenar)

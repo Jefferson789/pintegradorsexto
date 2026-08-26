@@ -10,6 +10,7 @@ import { AlertaPredictivaModule } from './alerta-predictiva/alerta-predictiva.mo
 import { IntervencionModule } from './intervencion/intervencion.module';
 import { DatasetPrediccionModule } from './vw-dataset-prediccion/vw-dataset-prediccion.module';
 import { PrediccionModule } from './prediccion/prediccion.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { PrediccionModule } from './prediccion/prediccion.module';
     AlertaPredictivaModule,
     IntervencionModule,
     DatasetPrediccionModule,
-    PrediccionModule,   
+    PrediccionModule,
+    AuthModule,   
   ],
 })
 export class AppModule {}
