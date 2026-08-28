@@ -14,7 +14,7 @@ export class CreateUsuarioDto {
   correo!: string;
 
   @IsString()
-  contrasena_hash!: string;
+  contrasena!: string;
 
   @IsEnum(['administrador', 'director', 'docente', 'psicologo', 'trabajador_social'])
   rol!: string;
