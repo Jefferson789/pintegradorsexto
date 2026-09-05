@@ -11,6 +11,7 @@ import { IntervencionModule } from './intervencion/intervencion.module';
 import { DatasetPrediccionModule } from './vw-dataset-prediccion/vw-dataset-prediccion.module';
 import { PrediccionModule } from './prediccion/prediccion.module';
 import { AuthModule } from './auth/auth.module';
+import { LoggerModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { AuthModule } from './auth/auth.module';
     IntervencionModule,
     DatasetPrediccionModule,
     PrediccionModule,
-    AuthModule,   
+    AuthModule,
+    LoggerModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

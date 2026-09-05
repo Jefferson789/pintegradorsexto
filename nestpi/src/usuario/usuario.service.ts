@@ -5,37 +5,65 @@ import * as bcrypt from 'bcrypt';
 import { Usuario } from '../usuario/entities/usuario.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { AppLogger } from '../common/logger/logger.service';
 
 @Injectable()
 export class UsuarioService {
   constructor(
     @InjectRepository(Usuario)
     private readonly repo: Repository<Usuario>,
+    private readonly logger: AppLogger,
   ) { }
 
   async findAll(): Promise<Usuario[]> {
-    return this.repo.find();
+    const usuarios = await this.repo.find();
+
+    this.logger.log(
+      `Consulta de usuarios | cantidad=${usuarios.length}`,
+    );
+
+    return usuarios;
   }
 
   async findOne(id: number): Promise<Usuario> {
-    const item = await this.repo.findOne({ where: { id_usuario: id } });
-    if (!item) throw new NotFoundException(`Usuario ${id} no encontrado`);
+    const item = await this.repo.findOne({
+      where: { id_usuario: id },
+    });
+
+    if (!item) {
+      this.logger.warn(
+        `Usuario no encontrado | usuario=${id}`,
+      );
+
+      throw new NotFoundException(
+        `Usuario ${id} no encontrado`,
+      );
+    }
+
+    this.logger.log(
+      `Usuario consultado | usuario=${id}`,
+    );
+
     return item;
   }
 
   async create(dto: CreateUsuarioDto): Promise<Usuario> {
-    // 1. Verificar que no exista la cédula o correo (evita error 500 feo)
     const existe = await this.repo.findOne({
       where: [{ cedula: dto.cedula }, { correo: dto.correo }],
     });
+
     if (existe) {
-      throw new BadRequestException('La cédula o el correo ya están registrados');
+      this.logger.warn(
+        `Creación de usuario rechazada | cédula o correo ya registrado`,
+      );
+
+      throw new BadRequestException(
+        'La cédula o el correo ya están registrados',
+      );
     }
 
-    // 2. Hashear la contraseña
     const hash = await bcrypt.hash(dto.contrasena, 10);
 
-    // 3. Crear el usuario con el hash (no guardamos la contraseña en texto plano)
     const item = this.repo.create({
       cedula: dto.cedula,
       nombres: dto.nombres,
@@ -46,24 +74,58 @@ export class UsuarioService {
       estado: dto.estado,
     });
 
-    return this.repo.save(item);
+    const usuario = await this.repo.save(item);
+
+    this.logger.log(
+      `Usuario creado | usuario=${usuario.id_usuario} | rol=${usuario.rol}`,
+    );
+
+    return usuario;
   }
 
-  async update(id: number, dto: UpdateUsuarioDto): Promise<Usuario> {
+  async update(
+    id: number,
+    dto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
     const updateData: any = { ...dto };
 
-    // Si viene nueva contraseña, hashearla
     if (dto.contrasena) {
-      updateData.contrasena_hash = await bcrypt.hash(dto.contrasena, 10);
-      delete updateData.contrasena; // No guardar el texto plano
+      updateData.contrasena_hash = await bcrypt.hash(
+        dto.contrasena,
+        10,
+      );
+
+      delete updateData.contrasena;
+
+      this.logger.log(
+        `Contraseña de usuario actualizada | usuario=${id}`,
+      );
     }
 
     await this.repo.update(id, updateData);
+
+    this.logger.log(
+      `Usuario actualizado | usuario=${id}`,
+    );
+
     return this.findOne(id);
   }
 
   async remove(id: number): Promise<void> {
     const result = await this.repo.delete(id);
-    if (result.affected === 0) throw new NotFoundException(`Usuario ${id} no encontrado`);
+
+    if (result.affected === 0) {
+      this.logger.warn(
+        `Eliminación fallida | usuario=${id} no encontrado`,
+      );
+
+      throw new NotFoundException(
+        `Usuario ${id} no encontrado`,
+      );
+    }
+
+    this.logger.log(
+      `Usuario eliminado | usuario=${id}`,
+    );
   }
 }

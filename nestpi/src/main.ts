@@ -1,9 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { AppLogger } from './common/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const logger = app.get(AppLogger);
+
+  app.useLogger(logger);
+  app.useGlobalInterceptors(new LoggingInterceptor(logger));
 
   // CORS para que el frontend pueda consumir las APIs
   app.enableCors({

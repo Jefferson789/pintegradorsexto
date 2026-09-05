@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { AlertaPredictiva } from '../alerta-predictiva/entities/alerta-predictiva.entity';
 import { Estudiante } from '../estudiante/entities/estudiante.entity';
 import { HistorialAcademico } from '../historial-academico/entities/historial-academico.entity';
+import { AppLogger } from '../common/logger/logger.service';
 
 @Injectable()
 export class PrediccionService {
@@ -19,26 +20,48 @@ export class PrediccionService {
     private readonly estudianteRepo: Repository<Estudiante>,
     @InjectRepository(HistorialAcademico)  // <-- AGREGADO
     private readonly historialRepo: Repository<HistorialAcademico>,
+    private readonly logger: AppLogger,
   ) { }
 
+
+
   async predecirEstudiante(idEstudiante: number, idPeriodo: number): Promise<AlertaPredictiva> {
-    // 1. Buscar el estudiante con sus relaciones
+    this.logger.log(
+      `Solicitud de predicción | estudiante=${idEstudiante} | periodo=${idPeriodo}`,
+    );
+
     const estudiante = await this.estudianteRepo.findOne({
       where: { id_estudiante: idEstudiante },
       relations: { familia: true, curso: true },
     });
 
     if (!estudiante) {
+      this.logger.warn(
+        `Predicción rechazada | estudiante=${idEstudiante} no encontrado`,
+      );
+
       throw new NotFoundException(`Estudiante ${idEstudiante} no encontrado`);
     }
 
-    // 2. Buscar el historial académico más reciente del estudiante
+    this.logger.log(
+      `Estudiante encontrado | estudiante=${idEstudiante}`,
+    );
+
     const historial = await this.historialRepo.findOne({
       where: { id_estudiante: idEstudiante },
-      order: { id_historial: 'DESC' }, // El más reciente primero
+      order: { id_historial: 'DESC' },
     });
 
-    // 3. Construir el payload con datos REALES (no más 0)
+    if (historial) {
+      this.logger.log(
+        `Historial académico encontrado | estudiante=${idEstudiante} | historial=${historial.id_historial}`,
+      );
+    } else {
+      this.logger.warn(
+        `Sin historial académico | estudiante=${idEstudiante} | se utilizarán valores por defecto`,
+      );
+    }
+
     const payload = {
       id_estudiante: estudiante.id_estudiante,
       genero: estudiante.genero,
@@ -59,8 +82,6 @@ export class PrediccionService {
       recibe_bono: estudiante.familia?.recibe_bono ?? false,
       tiene_internet: estudiante.familia?.tiene_internet ?? false,
       nivel_instruccion: estudiante.familia?.nivel_instruccion ?? 'sin_instruccion',
-
-      // ─── CAMPOS ACADÉMICOS DESDE HISTORIAL (con fallback) ───
       promedio_general: historial?.promedio_general ?? 7.0,
       materias_reprobadas: historial?.materias_reprobadas ?? 0,
       es_repitente: historial?.es_repitente ?? false,
@@ -70,7 +91,10 @@ export class PrediccionService {
       nivel: estudiante.curso?.nivel ?? 'EGB1',
     };
 
-    // 4. Llamar al microservicio Python
+    this.logger.log(
+      `Enviando datos al servicio ML | estudiante=${idEstudiante}`,
+    );
+
     try {
       const response = await firstValueFrom(
         this.httpService.post(`${this.PYTHON_ML_URL}/predict`, payload),
@@ -78,7 +102,14 @@ export class PrediccionService {
 
       const resultado = response.data;
 
-      // 5. Guardar la alerta en MySQL
+      this.logger.log(
+        `Respuesta recibida del servicio ML | estudiante=${idEstudiante}`,
+      );
+
+      this.logger.log(
+        `Predicción completada | estudiante=${idEstudiante} | riesgo=${resultado.nivel_riesgo} | probabilidad=${resultado.probabilidad}`,
+      );
+
       const alerta = this.alertaRepo.create({
         id_estudiante: idEstudiante,
         id_periodo: idPeriodo,
@@ -89,14 +120,26 @@ export class PrediccionService {
         observaciones: `Predicción ML - Modelo: ${resultado.modelo || 'scikit-learn'}`,
       });
 
-      return this.alertaRepo.save(alerta);
+      const alertaGuardada = await this.alertaRepo.save(alerta);
 
+      this.logger.log(
+        `Alerta predictiva almacenada | estudiante=${idEstudiante} | alerta=${alertaGuardada.id_alerta} | riesgo=${resultado.nivel_riesgo}`,
+      );
+
+      return alertaGuardada;
     } catch (error) {
+      this.logger.error(
+        `Error al generar predicción | estudiante=${idEstudiante}`,
+        (error as Error).message,
+      );
+
       throw new BadRequestException(
         `Error al comunicarse con el servicio de ML: ${(error as Error).message}. Asegúrate de que Python está corriendo en ${this.PYTHON_ML_URL}`,
       );
     }
   }
+
+
 
   private calcularEdad(fechaNacimiento: Date): number {
     const hoy = new Date();
