@@ -1,0 +1,10 @@
+<div class="search-box">
+    <span class="search-icon">
+        🔍
+    </span>
+    <input type="text" [value]="value" [placeholder]="placeholder" (input)="
+            valueChange.emit(
+              $any($event.target).value
+            )
+        ">
+</div>

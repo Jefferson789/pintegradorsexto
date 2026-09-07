@@ -1,0 +1,219 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+/* ========================= */
+/* CONTENEDOR PRINCIPAL */
+/* ========================= */
+.form-layout {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+/* ========================= */
+/* CABECERA */
+/* ========================= */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.form-header p {
+    margin-top: .75rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.close-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+    transition: all .25s ease;
+}
+
+.close-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+/* ========================= */
+/* BODY */
+/* ========================= */
+.form-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ========================= */
+/* FORMULARIOS PROYECTADOS */
+/* ========================= */
+:host ::ng-deep .form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2,
+            minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+:host ::ng-deep .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+:host ::ng-deep .form-group label {
+    color: var(--text-primary);
+    font-size: .95rem;
+    font-weight: 600;
+}
+
+:host ::ng-deep .form-group input,
+:host ::ng-deep .form-group select,
+:host ::ng-deep .form-group textarea {
+    width: 100%;
+    min-height: 52px;
+    padding: .85rem 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    transition: all .25s ease;
+}
+
+:host ::ng-deep .form-group textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+:host ::ng-deep .form-group input::placeholder,
+:host ::ng-deep .form-group textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+:host ::ng-deep .form-group input:focus,
+:host ::ng-deep .form-group select:focus,
+:host ::ng-deep .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, .15);
+}
+
+:host ::ng-deep .error-message {
+    color: var(--danger);
+    font-size: .85rem;
+    margin-top: .25rem;
+}
+
+/* ========================= */
+/* ACCIONES */
+/* ========================= */
+:host ::ng-deep .form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ========================= */
+/* BOTONES */
+/* ========================= */
+:host ::ng-deep .btn {
+    min-width: 180px;
+    min-height: 52px;
+    border-radius: 14px;
+    border: none;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+:host ::ng-deep .btn-primary {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-text);
+}
+
+:host ::ng-deep .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+:host ::ng-deep .btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+:host ::ng-deep .btn-secondary:hover {
+    background: var(--bg-tertiary);
+}
+
+.form-layout {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+@media (max-width: 768px) {
+    .form-header {
+        padding: 1.5rem;
+    }
+
+    .form-body {
+        padding: 1.5rem;
+    }
+
+    :host ::ng-deep .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    :host ::ng-deep .form-actions {
+        flex-direction: column;
+    }
+
+    :host ::ng-deep .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-body {
+        padding: 1rem;
+    }
+}

@@ -1,0 +1,341 @@
+@use './theme';
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    /* CLAVE: Bloquea el scroll en el body para evitar doble barra */
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+
+    overflow-x: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* ===========================
+   GLOBAL SURFACES
+=========================== */
+
+.card {
+    background: var(--card-bg, var(--surface));
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 20px;
+
+    box-shadow: var(--shadow);
+}
+
+/* ===========================
+   GLOBAL FORM ELEMENTS
+=========================== */
+
+.input {
+    width: 100%;
+
+    background: var(--input-bg, var(--bg-secondary));
+
+    color: var(--text-primary);
+
+    border: 1px solid var(--input-border, var(--border-color));
+
+    border-radius: 12px;
+
+    padding: 0.9rem 1rem;
+
+    transition: all 0.25s ease;
+}
+
+.input:focus {
+    outline: none;
+
+    border-color: var(--primary);
+
+    box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+/* ===========================
+   GLOBAL BUTTONS
+=========================== */
+
+.btn-primary {
+    border: none;
+
+    padding: 0.9rem 1.25rem;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+
+    color: var(--button-primary-text, #fff);
+
+    background: var(--button-primary-bg, var(--primary));
+
+    transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-report {
+
+    border: none;
+
+    background: var(--primary);
+
+    color: white;
+
+    padding: .9rem 1.3rem;
+
+    border-radius: 14px;
+
+    font-weight: 600;
+
+    font-size: .95rem;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: .5rem;
+
+    cursor: pointer;
+
+    transition: all .25s ease;
+
+    box-shadow: var(--shadow);
+}
+
+.btn-report:hover {
+
+    transform: translateY(-2px);
+
+    opacity: .95;
+}
+
+.btn-report:active {
+
+    transform: translateY(0);
+}
+
+.btn-report:focus-visible {
+
+    outline: none;
+
+    box-shadow:
+        0 0 0 4px var(--focus-ring);
+}
+
+/* ===========================
+   RESPONSIVE FOUNDATION
+=========================== */
+
+.container {
+    width: 100%;
+
+    max-width: 1440px;
+
+    margin: 0 auto;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (max-width: 768px) {
+
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .btn-report {
+        width: 100%;
+    }
+
+}
+
+/* ==========================================
+   INTRO.JS
+========================================== */
+
+.introjs-tooltip {
+
+    width: 600px !important;
+    max-width: 600px !important;
+
+    border-radius: 20px !important;
+    border: none !important;
+
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, .15) !important;
+
+    font-family:
+        "Inter",
+        sans-serif !important;
+}
+
+.introjs-tooltip-title {
+
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+
+    color: var(--primary) !important;
+}
+
+.introjs-tooltiptext {
+
+    padding-left: 1.5rem !important;
+
+    padding-right: 1.5rem !important;
+
+    margin: 0 !important;
+
+    font-size: 1rem !important;
+
+    line-height: 1.9 !important;
+
+    color: var(--text-secondary) !important;
+}
+
+.introjs-tooltip-body {
+
+    padding-left: 1rem !important;
+
+    padding-right: 1rem !important;
+}
+
+
+.introjs-button {
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    min-width: 110px !important;
+
+    min-height: 42px !important;
+
+    border-radius: 12px !important;
+
+    font-weight: 600 !important;
+
+    border: none !important;
+
+    padding: .65rem 1rem !important;
+
+    text-shadow: none !important;
+
+    box-shadow: none !important;
+}
+
+.introjs-nextbutton {
+
+    background: var(--primary) !important;
+
+    color: white !important;
+}
+
+.introjs-prevbutton {
+
+    background: var(--bg-secondary) !important;
+
+    color: var(--text-primary) !important;
+}
+
+.introjs-skipbutton {
+
+    margin-left: 1rem !important;
+
+    font-size: .9rem !important;
+
+    font-weight: 600 !important;
+
+    color: var(--text-secondary) !important;
+}
+
+.introjs-bullets {
+
+    display: none !important;
+}
+
+.introjs-progress {
+
+    background: #e5e7eb !important;
+
+    height: 6px !important;
+
+    border-radius: 999px !important;
+
+    overflow: hidden;
+}
+
+.introjs-progressbar {
+
+    background: var(--primary) !important;
+}
+
+.introjs-skipbutton {
+
+    position: absolute !important;
+
+    top: 2px !important;
+
+    right: 20px !important;
+
+    margin: 0 !important;
+
+    font-size: .9rem !important;
+
+    font-weight: 600 !important;
+
+    color: #64748b !important;
+
+    text-decoration: none !important;
+}
