@@ -6,7 +6,7 @@ import { LogsService } from './logs.service';
 @UseGuards(AuthGuard('jwt'))
 export class LogsController {
     constructor(private readonly logsService: LogsService) { }
-    //get
+
     @Get()
     async getApplicationLogs(@Request() req: any, @Query('limit') limit?: string) {
         this.validateAdmin(req);
