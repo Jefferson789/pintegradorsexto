@@ -12,6 +12,7 @@ import { DatasetPrediccionModule } from './vw-dataset-prediccion/vw-dataset-pred
 import { PrediccionModule } from './prediccion/prediccion.module';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './common/logger/logger.module';
+import { LogsModule } from './common/logs/logs.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { LoggerModule } from './common/logger/logger.module';
     PrediccionModule,
     AuthModule,
     LoggerModule,
+    LogsModule,
   ],
 })
 export class AppModule { }
