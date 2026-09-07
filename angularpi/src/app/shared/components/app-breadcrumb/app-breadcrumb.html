@@ -1,0 +1,13 @@
+<nav class="breadcrumb">
+    <a routerLink="/dashboard">
+        🏠
+    </a>
+    @for (item of breadcrumbs; track $index) {
+    <a [routerLink]="item.url">
+        {{ item.label }}
+    </a>
+    @if (!$last) {
+    <span>›</span>
+    }
+    }
+</nav>

@@ -1,0 +1,75 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100vh;
+    background: var(--bg-primary);
+}
+
+.main-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    transition: all .3s ease;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.page-content {
+    padding: 1.5rem;
+}
+
+.mobile-overlay {
+    position: fixed;
+    inset: 72px 0 0 0;
+    background: rgba(0, 0, 0, .45);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+}
+
+app-sidebar {
+    width: 260px;
+    transition: width .3s ease;
+    flex-shrink: 0;
+}
+
+.main-layout.sidebar-collapsed app-sidebar {
+    width: 80px;
+}
+
+/* TABLET */
+@media (max-width: 992px) {
+    .page-content {
+        padding: 1.25rem;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .main-body {
+        display: block;
+    }
+
+    .content {
+        width: 100%;
+    }
+
+    .page-content {
+        padding: 1rem;
+    }
+
+    .mobile-overlay {
+        inset: 0;
+    }
+}

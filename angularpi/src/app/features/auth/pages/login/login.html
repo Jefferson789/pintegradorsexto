@@ -1,0 +1,105 @@
+<div class="login-container">
+    <button class="theme-toggle" (click)="toggleTheme()" aria-label="Cambiar tema">
+        ◐
+    </button>
+    <section class="hero-section">
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <div class="institution-badge">
+                <img src="/logo/logo-siade.svg" alt="SIADE" class="badge-logo" />
+                <div class="badge-info">
+                    <span class="badge-title">
+                        SIADE
+                    </span>
+                    <span class="badge-subtitle">
+                        UEF Atanasio Viteri · AMIE 17H00127
+                    </span>
+                </div>
+                <img src="/images/AtanasioViteri.png" alt="Unidad Educativa Fiscal Atanasio Viteri"
+                    class="school-image" />
+            </div>
+            <h1>
+                Sistema Inteligente para la Detección Temprana y Prevención del Abandono Escolar
+            </h1>
+            <h2>
+                Unidad Educativa Fiscal Atanasio Viteri
+            </h2>
+            <p>
+                Plataforma institucional basada en análisis
+                predictivo e inteligencia artificial para
+                la identificación temprana de estudiantes
+                en riesgo de abandono escolar.
+            </p>
+            <div class="features-list">
+                <div class="feature-item">
+                    ✅ Alertas Predictivas
+                </div>
+                <div class="feature-item">
+                    ✅ Analítica Educativa
+                </div>
+                <div class="feature-item">
+                    ✅ Gestión de Intervenciones
+                </div>
+                <div class="feature-item">
+                    ✅ Indicadores Institucionales
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="form-section">
+        <div class="login-card">
+            <div class="logo-area">
+                <img [src]="isDarkTheme ? '/logo/logo-siade-horizontal-dark.svg' : '/logo/logo-siade-horizontal-light.svg'"
+                    alt="Logo SIADE" class="login-logo" />
+                <img src="/images/AtanasioViteri.png" alt="Unidad Educativa Fiscal Atanasio Viteri"
+                    class="school-login-image" />
+            </div>
+            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                <div class="form-group">
+                    <label>
+                        Cédula
+                    </label>
+                    <input type="text" formControlName="cedula" placeholder="Cédula" (focus)="clearAlert()">
+                    @if (
+                    loginForm.get('cedula')?.touched &&
+                    loginForm.get('cedula')?.invalid
+                    ) {
+                    <small class="error-message">
+                        @if (loginForm.get('cedula')?.errors?.['required']) {
+                        La cédula es obligatoria.
+                        }
+                        @if (loginForm.get('cedula')?.errors?.['cedula']) {
+                        Ingrese una cédula válida.
+                        }
+                    </small>
+                    }
+                </div>
+                <div class="form-group">
+                    <label>
+                        Contraseña
+                    </label>
+                    <input type="password" formControlName="contrasena" placeholder="••••••••" (focus)="clearAlert()">
+                    @if (
+                    loginForm.get('contrasena')?.touched &&
+                    loginForm.get('contrasena')?.invalid
+                    ) {
+                    <small class="error-message">
+                        @if (loginForm.get('contrasena')?.errors?.['required']) {
+                        La contraseña es obligatoria.
+                        }
+                        @if (loginForm.get('contrasena')?.errors?.['minlength']) {
+                        La contraseña debe contener al menos 6 caracteres.
+                        }
+                    </small>
+                    }
+                </div>
+                <button type="submit" class="btn-login">
+                    Ingresar al Sistema
+                </button>
+            </form>
+            <div class="footer-info">
+                <span>Versión 1.0.0</span>
+            </div>
+        </div>
+    </section>
+</div>

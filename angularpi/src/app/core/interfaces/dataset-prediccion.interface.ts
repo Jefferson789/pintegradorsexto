@@ -1,0 +1,29 @@
+export interface DatasetPrediccion {
+    id_estudiante: number;
+    genero: string;
+    edad_actual: string;
+    edad_esperada: number;
+    tiene_sobreedad: string;
+    tiene_discapacidad: number;
+    es_trabajador_infantil: number;
+    horas_trabajo_semanales: number;
+    embarazo_adolescente: number;
+    es_victima_violencia: number;
+    consumo_sustancias: number;
+    ha_abandonado_previamente: number;
+    anios_abandono_previo: number;
+    tipo_ingreso: string;
+    ingreso_mensual: string;
+    numero_integrantes: number;
+    recibe_bono: number;
+    tiene_internet: number;
+    nivel_instruccion: string;
+    promedio_general: string;
+    materias_reprobadas: number;
+    es_repitente: number;
+    numero_repeticiones: number;
+    porcentaje_asistencia: string;
+    faltas_disciplinarias: number;
+    nivel: string;
+    abandono: string;
+}

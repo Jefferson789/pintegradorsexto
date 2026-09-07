@@ -1,0 +1,13 @@
+<div *ngIf="isVisible" class="alert-container">
+    <div class="alert-content" [class]="'alert-' + type">
+        <div class="alert-icon">
+            {{ icon }}
+        </div>
+        <div class="alert-message">
+            {{ message }}
+        </div>
+        <button type="button" class="alert-close" (click)="close()" aria-label="Cerrar alerta">
+            ✕
+        </button>
+    </div>
+</div>

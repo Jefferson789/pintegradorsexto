@@ -1,0 +1,17 @@
+<div class="toast-container">
+    @for (
+    toast of (
+    toastService.toasts$ | async
+    );
+    track toast.id
+    ) {
+    <div class="toast" [ngClass]="toast.type">
+        <div class="toast-message">
+            {{ toast.message }}
+        </div>
+        <button type="button" class="toast-close" (click)="toastService.remove(toast.id)">
+            ✕
+        </button>
+    </div>
+    }
+</div>

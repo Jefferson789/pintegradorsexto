@@ -1,0 +1,137 @@
+/* ===========================
+   LIGHT THEME
+=========================== */
+
+:root {
+
+  /* Backgrounds */
+
+  --bg-primary: #edf3f8;
+  --bg-secondary: #f6f9fc;
+
+  /* Surfaces */
+
+  --surface: #ffffff;
+  --surface-hover: #f1f6fb;
+
+  /* Text */
+
+  --text-primary: #10233d;
+  --text-secondary: #526377;
+
+  /* Borders */
+
+  --border-color: #d6e0eb;
+
+  /* Brand */
+
+  --primary: #24538a;
+  --primary-dark: #1d4674;
+
+  /* Hero Login */
+
+  --hero-start: #edf3f8;
+  --hero-middle: #dce7f2;
+  --hero-end: #c7d8ea;
+
+  --hero-text: #10233d;
+  --hero-subtitle: #2d4b6d;
+  --hero-description: #526377;
+
+  /* Components */
+
+  --card-bg: #ffffff;
+
+  --input-bg: #ffffff;
+  --input-border: #c6d2df;
+
+  --sidebar-bg: #f8fbfd;
+  --header-bg: #ffffff;
+
+  --button-primary-bg: #24538a;
+  --button-primary-text: #ffffff;
+  --button-primary-bg-hover: #1d4674;
+  --info: #3b82f6;
+  --info-dark: #2563eb;
+
+  /* Status */
+
+  --success: #2e9f63;
+  --warning: #d89b26;
+  --danger: #d84d4d;
+
+  /* Effects */
+
+  --shadow: 0 10px 35px rgba(16, 35, 61, 0.08);
+  --focus-ring: rgba(36, 83, 138, 0.18);
+}
+
+/* ===========================
+   DARK THEME
+=========================== */
+
+body.dark-theme {
+
+  /* Backgrounds */
+
+  --bg-primary: #08111f;
+  --bg-secondary: #101b2c;
+
+  /* Surfaces */
+
+  --surface: #162436;
+  --surface-hover: #1d3047;
+
+  /* Text */
+
+  --text-primary: #eef4fa;
+  --text-secondary: #a7b8cb;
+
+  /* Borders */
+
+  --border-color: #2d4057;
+
+  /* Brand */
+
+  --primary: #4f7cad;
+  --primary-dark: #6c91bc;
+
+  /* Hero Login */
+
+  --hero-start: #08111f;
+  --hero-middle: #142945;
+  --hero-end: #1d3a5f;
+
+  --hero-text: #ffffff;
+  --hero-subtitle: #d5e2f0;
+  --hero-description: #b7c8da;
+
+  /* Components */
+
+  --card-bg: #162436;
+
+  --input-bg: #101b2c;
+  --input-border: #30455f;
+
+  --sidebar-bg: #0d1726;
+  --header-bg: #162436;
+
+  --button-primary-bg: #4f7cad;
+  --button-primary-text: #ffffff;
+  --button-primary-bg-hover: #426b97;
+
+  --info: #60a5fa;
+  --info-dark: #3b82f6;
+
+  /* Status */
+
+  --success: #3bb273;
+  --warning: #e0a937;
+  --danger: #e35d5d;
+
+  /* Effects */
+
+  --shadow: 0 25px 55px rgba(0, 0, 0, 0.5);
+  --focus-ring: rgba(79, 124, 173, 0.25);
+
+}
